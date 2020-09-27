@@ -1,0 +1,14 @@
+apiVersion: v1
+data:
+  filebeat.yml: |
+    filebeat.inputs:
+    - type: log
+      paths:
+        - /var/log/event-simulator/app.log
+    output.elasticsearch:
+      hosts: ["elasticsearch:9200"]
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: filebeat-cfg
+  namespace: elastic-search
