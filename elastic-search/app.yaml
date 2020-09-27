@@ -12,7 +12,11 @@ spec:
     volumeMounts:
     - mountPath: /log
       name: log-volume
-
+  - name: sidecar
+    image: kodekloud/filebeat-configured
+    volumeMounts:
+    - mountPath: /var/log/event-simulator/
+      name: log-volume
   volumes:
   - name: log-volume
     hostPath:
