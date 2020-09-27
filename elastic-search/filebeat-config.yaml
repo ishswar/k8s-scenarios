@@ -11,4 +11,4 @@ kind: ConfigMap
 metadata:
   creationTimestamp: null
   name: filebeat-cfg
-  namespace: elastic-search
+  namespace: elastic-stack
