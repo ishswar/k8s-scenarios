@@ -6,7 +6,7 @@ metadata:
     app: myapp-deploy
   name: myapp-deploy
 spec:
-  replicas: 1
+  replicas: 5
   selector:
     matchLabels:
       app: myapp-deploy
@@ -18,7 +18,8 @@ spec:
         app: myapp-deploy
     spec:
       containers:
-      - image: ishswar/webpyapp:1.0.0
+      - image: ishswar/webpyapp:1.0.1
+        #ating uninstall script
         name: webpyapp
         resources: {}
 status: {}

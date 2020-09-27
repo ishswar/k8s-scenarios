@@ -1,3 +1,4 @@
+import os
 import uuid
 import socket
 from flask import Flask, render_template, request, redirect, url_for, flash, make_response, session
@@ -6,6 +7,11 @@ app = Flask(__name__)
 
 uid = uuid.uuid4()
 app.secret_key = str(uid)
+
+
+@app.route('/')
+def hello():
+    return redirect('/visits-counter')
 
 
 # ...
@@ -26,9 +32,19 @@ def delete_visits():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8080)
+    httpPort = 8080
+    if 'HTTP_PORT' in os.environ:
+        try:
+            httpPort = int(os.environ['HTTP_PORT'])
+        except ValueError:
+            print("****** Failed to parse environment variable [HTTP_PORT], will use default port 8080")
 
-#curl --cookie cookie.txt --cookie-jar cookie.txt http://localhost:8080/visits-counter/
+    print("Starting server on Port: " + str(httpPort))
+    app.run(host='0.0.0.0', port=httpPort)
+
+# curl --cookie cookie.txt --cookie-jar cookie.txt http://localhost:8080/visits-counter/
+
+# curl --cookie cookie.txt --cookie-jar cookie.txt http://localhost:80/visits-counter/
 
 """FROM python:3.6
 
@@ -42,4 +58,4 @@ WORKDIR /opt
 
 ENTRYPOINT ["python", "app.py"] """
 
-#ishswar/webpyapp:1.0.0
+# ishswar/webpyapp:1.0.0
