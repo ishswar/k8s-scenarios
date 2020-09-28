@@ -29,6 +29,7 @@ cp -i /etc/kubernetes/admin.conf "$HOME/.kube/config"
 sudo chown $(id -u):$(id -g) "$HOME/.kube/config"
 
 kubectl version --short || { echo "kubectl configuration issue .. need to be invastigated"; exit 1; }
+echo ""
 
 echo "Installing CNI for cluster"
 echo ""
@@ -40,7 +41,7 @@ echo "Will wait for Node $(hostname) to post for Ready"
 SECONDS=0
 while : ;
  do
-  if [ $(kubectl get nodes $(hostname) -o jsonpath='{range .status.conditions[?(@.type=="Ready")]}{.reason}{end}') != "KubeletReady" ]; then
+  if [ $(kubectl get nodes $(hostname) -o jsonpath='{range .items[*].status.conditions[?(@.type=="Ready")]}{.reason}{end}') != "KubeletReady" ]; then
   echo "Node/kubelet on Host $(hostname) is not yet Ready ... waited $SECONDS(seconds)";
 
   if [ $(( $SECONDS % 2 )) -eq 0 ]; then
@@ -72,6 +73,7 @@ echo "Starting to work on second controleplane on node machine"
 
 echo ""
 echo "Upgrading kubeadm,kubelet and kubectl on remote machine"
+echo ""
 ssh node01 apt-get update && apt-get install -y kubeadm=1.19.0-00
 ssh node01 apt-get install -y kubelet=1.19.0-00 kubectl=1.19.0-00
 
@@ -82,11 +84,20 @@ JOIN_COMMAND=$(kubeadm token create --print-join-command --certificate-key "$CER
 #
 
 echo "JOIN COMMAND is [$JOIN_COMMAND]"
-echo $$JOIN_COMMAND > join.text
+echo $JOIN_COMMAND > join.text
 echo "Running joining command from remote machine"
-#ssh node01 "$JOIN_COMMAND"
+echo ""
+ssh node01 "$JOIN_COMMAND"
 
 
+echo "Checking the status of master nodes"
+echo ""
+
+NUMBER_READY_NODES=$(kubectl get nodes -o jsonpath='{range .items[*]}{range .status.conditions[?(@.type=="Ready")]}{.reason}{"\n"}{end}{end}' | grep "KubeletReady" | wc -l)
+if [ "$NUMBER_READY_NODES" -eq 2 ]; then
+  echo "Sucess - we now have $NO_READY_NODES master nodes"
+  kubectl get nodes
+fi
 
 
 
