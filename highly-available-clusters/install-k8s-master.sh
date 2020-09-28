@@ -19,7 +19,8 @@ apt-get install -y kubelet=1.19.0-00 kubectl=1.19.0-00
 echo "Starting to install kubernetes"
 echo "Command is [sudo kubeadm init --control-plane-endpoint $LB_IP:$LB_PORT --upload-certs --pod-network-cidr=10.244.0.0/16]"
 
-sudo kubeadm init --control-plane-endpoint "$LB_IP:$LB_PORT" --upload-certs --pod-network-cidr=10.244.0.0/16 || { echo "kubeadm init failed ... need to invastiated"; exit 1; }
+sudo kubeadm init --control-plane-endpoint "$LB_IP:$LB_PORT" --pod-network-cidr=10.244.0.0/16 || { echo "kubeadm init failed ... need to invastiated"; exit 1; }
+#sudo kubeadm init --control-plane-endpoint "$LB_IP:$LB_PORT" --upload-certs --pod-network-cidr=10.244.0.0/16 || { echo "kubeadm init failed ... need to invastiated"; exit 1; }
 
 echo "Setting configuration for kubectl"
 echo ""
