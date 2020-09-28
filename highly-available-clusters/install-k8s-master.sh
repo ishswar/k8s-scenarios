@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 
 LB_IP=$(dig controlplane +short)
