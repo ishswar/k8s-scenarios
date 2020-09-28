@@ -28,7 +28,33 @@ sudo chown $(id -u):$(id -g) "$HOME/.kube/config"
 curl https://docs.projectcalico.org/manifests/canal.yaml -O
 kubectl apply -f canal.yaml
 
-kubectl get nodes 
+echo "Will wait for Node $(hostname) to post for Ready"
+SECONDS=0
+while : ;
+ do
+  if [ $(kubectl get nodes $(hostname) -o jsonpath='{range .status.conditions[?(@.type=="Ready")]}{.reason}{end}') != "KubeletReady" ]; then
+  echo "Node/kubelet on Host $(hostname) is not yet Ready ... waited $SECONDS(seconds)";
+
+  if [ $(( $SECONDS % 2 )) -eq 0 ]; then
+      echo "Reason for not ready :"
+      kubectl get nodes $(hostname) -o jsonpath='{range .status.conditions[?(@.type=="Ready")]}{.message}{"\n"}{end}'
+  fi
+
+  sleep 5;
+  if [ $SECONDS -gt 80 ]; then
+     echo "Waited $SECONDS - will exit now - this needs to be invastigated"
+     exit 1;
+     break;
+  fi
+  elif [ $(kubectl get nodes $(hostname) -o jsonpath='{range .status.conditions[?(@.type=="Ready")]}{.reason}{end}') = "KubeletReady" ]; then
+    echo "Node/kubelet is posted Ready now"
+    break;
+  fi
+ done
+
+#kubectl get nodes $(hostname) -o jsonpath='{range .status.conditions[?(@.type=="Ready")]}{.reason}{"\n"}{end}'
+#KubeletNotReady
+#KubeletReady
 
 #ssh node01 apt-get update && apt-get install -y kubeadm=1.19.0-00
 #ssh node01 apt-get install -y kubelet=1.19.0-00 kubectl=1.19.0-00
