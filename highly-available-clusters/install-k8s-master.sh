@@ -25,8 +25,8 @@ mkdir -p "$HOME/.kube"
 cp -i /etc/kubernetes/admin.conf "$HOME/.kube/config"
 sudo chown $(id -u):$(id -g) "$HOME/.kube/config"
 
-curl https://docs.projectcalico.org/manifests/canal.yaml -O
-kubectl apply -f canal.yaml
+#curl https://docs.projectcalico.org/manifests/canal.yaml -O
+#kubectl apply -f canal.yaml
 
 echo "Will wait for Node $(hostname) to post for Ready"
 SECONDS=0
