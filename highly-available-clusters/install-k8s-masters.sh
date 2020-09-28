@@ -113,7 +113,7 @@ echo ""
 
 NUMBER_READY_NODES=$(kubectl get nodes -o jsonpath='{range .items[*]}{range .status.conditions[?(@.type=="Ready")]}{.reason}{"\n"}{end}{end}' | grep "KubeletReady" | wc -l)
 if [ "$NUMBER_READY_NODES" -eq 2 ]; then
-  echo "Sucess - we now have $NO_READY_NODES master nodes"
+  echo "SUCCESS - we now have $NO_READY_NODES master nodes"
   kubectl get nodes
 fi
 
