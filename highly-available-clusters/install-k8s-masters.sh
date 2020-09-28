@@ -97,14 +97,14 @@ ssh $SECOND_MACHINE_NAME apt-get install -y kubelet=$KUBERNETES_VERSION kubectl=
 echo "Generating joining command that remote kubeadm can use to join this cluster"
 #CERT_KEY=$(kubeadm alpha certs certificate-key) <-- This should work in 1.19 but it does not (or failed for me)
 CERT_KEY=$(kubeadm init phase upload-certs --upload-certs | sed -n 3p)
-CONTROL-PLANE_JOIN_COMMAND=$(kubeadm token create --print-join-command --certificate-key "$CERT_KEY")
+CONTROL_PLANE_JOIN_COMMAND=$(kubeadm token create --print-join-command --certificate-key "$CERT_KEY")
 #
 
-echo "JOIN COMMAND is [$CONTROL-PLANE_JOIN_COMMAND]"
-echo $CONTROL-PLANE_JOIN_COMMAND > join.text
+echo "JOIN COMMAND is [$CONTROL_PLANE_JOIN_COMMAND]"
+echo "$CONTROL_PLANE_JOIN_COMMAND" > join.text
 echo "Running joining command from remote machine"
 echo ""
-ssh $SECOND_MACHINE_NAME "$CONTROL-PLANE_JOIN_COMMAND"
+ssh $SECOND_MACHINE_NAME "$CONTROL_PLANE_JOIN_COMMAND"
 
 
 echo "Checking the status of master nodes"
