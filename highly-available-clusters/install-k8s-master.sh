@@ -2,6 +2,15 @@
 
 
 LB_IP=$(dig controlplane +short)
+
+if [ -n "$LB_IP" ];
+ then
+    echo "";
+ else
+    echo "Could not find LB_IP from hostname 'controlplane' trying using hostname command now";
+    LB_IP=$(hostname -I | cut -d " " -f 1)
+fi
+
 LB_PORT=9443
 
 apt-get update && apt-get install -y kubeadm=1.19.0-00

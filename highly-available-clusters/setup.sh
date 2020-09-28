@@ -1,6 +1,16 @@
 #!/bin/sh
 
 MASTER_IP=$(dig controlplane +short)
+
+
+if [ -n "$MASTER_IP" ];
+ then
+    echo "";
+ else
+    echo "Could not find MASTER_IP from hostname 'controlplane' trying using hostname command now";
+    MASTER_IP=$(hostname -I | cut -d " " -f 1)
+fi
+
 MASTER_2_IP=$(dig node01 +short)
 
 cd /tmp/
