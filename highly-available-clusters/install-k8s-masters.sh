@@ -55,7 +55,7 @@ echo "Will wait for Node $(hostname) to post for Ready"
 SECONDS=0
 while : ;
  do
-  if [ $(kubectl get nodes $(hostname) -o jsonpath='{range .items[*].status.conditions[?(@.type=="Ready")]}{.reason}{end}') != "KubeletReady" ]; then
+  if [ $(kubectl get nodes $(hostname) -o jsonpath='{range .status.conditions[?(@.type=="Ready")]}{.reason}{end}') != "KubeletReady" ]; then
   echo "Node/kubelet on Host $(hostname) is not yet Ready ... waited $SECONDS(seconds)";
 
   if [ $(( $SECONDS % 2 )) -eq 0 ]; then
@@ -91,7 +91,8 @@ echo ""
 
 # SSH into remote host and run commands
 # comment out next wo lines if you don't want to update kubeadm , kubelet on remote machine to be at $KUBERNETES_VERSION
-ssh $SECOND_MACHINE_NAME apt-get update && apt-get install -y kubeadm=$KUBERNETES_VERSION
+ssh $SECOND_MACHINE_NAME apt-get update
+ssh $SECOND_MACHINE_NAME apt-get install -y kubeadm=$KUBERNETES_VERSION
 ssh $SECOND_MACHINE_NAME apt-get install -y kubelet=$KUBERNETES_VERSION kubectl=$KUBERNETES_VERSION
 
 echo "Generating joining command that remote kubeadm can use to join this cluster"
