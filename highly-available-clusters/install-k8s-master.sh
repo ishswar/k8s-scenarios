@@ -24,8 +24,8 @@ kubectl get nodes
 ssh node01 apt-get update && apt-get install -y kubeadm=1.19.0-00
 ssh node01 apt-get install -y kubelet=1.19.0-00 kubectl=1.19.0-00
 
-JOIN_COMMAND=$(kubeadm token create --print-join-command)
-JOIN_COMMAND="$JOIN_COMMAND --control-plane"
+CERT_KEY=$(kubeadm alpha certs certificate-key)
+JOIN_COMMAND=$(kubeadm token create --print-join-command --certificate-key "$CERT_KEY")
 
 echo "JOIN COMMAND is $JOIN_COMMAND"
 ssh node01 "$JOIN_COMMAND"
