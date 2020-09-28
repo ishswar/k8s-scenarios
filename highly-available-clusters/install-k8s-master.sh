@@ -19,8 +19,8 @@ apt-get install -y kubelet=1.19.0-00 kubectl=1.19.0-00
 echo "Starting to install kubernetes"
 echo "Command is [sudo kubeadm init --control-plane-endpoint $LB_IP:$LB_PORT --upload-certs --pod-network-cidr=10.244.0.0/16]"
 
-sudo kubeadm init --control-plane-endpoint "$LB_IP:$LB_PORT" --pod-network-cidr=10.244.0.0/16 || { echo "kubeadm init failed ... need to invastiated"; exit 1; }
-#sudo kubeadm init --control-plane-endpoint "$LB_IP:$LB_PORT" --upload-certs --pod-network-cidr=10.244.0.0/16 || { echo "kubeadm init failed ... need to invastiated"; exit 1; }
+#sudo kubeadm init --control-plane-endpoint "$LB_IP:$LB_PORT" --pod-network-cidr=10.244.0.0/16 || { echo "kubeadm init failed ... need to invastiated"; exit 1; }
+sudo kubeadm init --control-plane-endpoint "$LB_IP:$LB_PORT" --upload-certs --pod-network-cidr=10.244.0.0/16 || { echo "kubeadm init failed ... need to invastiated"; exit 1; }
 
 echo "Setting configuration for kubectl"
 echo ""
@@ -76,7 +76,8 @@ ssh node01 apt-get update && apt-get install -y kubeadm=1.19.0-00
 ssh node01 apt-get install -y kubelet=1.19.0-00 kubectl=1.19.0-00
 
 echo "Generating joining command that remote kubeadm can use to join this cluster"
-CERT_KEY=$(kubeadm alpha certs certificate-key)
+#CERT_KEY=$(kubeadm alpha certs certificate-key)
+CERT_KEY=$(kubeadm init phase upload-certs --upload-certs | sed -n 3p)
 JOIN_COMMAND=$(kubeadm token create --print-join-command --certificate-key "$CERT_KEY")
 #
 
