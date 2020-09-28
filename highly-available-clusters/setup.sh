@@ -39,7 +39,8 @@ log_format basic '$remote_addr [$time_local] '
 }
 EOF
 
-
+echo "NGINX passthrought file for tcp LB  and SSL passthrough for backend"
+echo ""
 bat /etc/nginx/passthrough.conf || cat /etc/nginx/passthrough.conf
 
 if [ $(cat /etc/nginx/nginx.conf | grep passthrough | wc -l) -eq 1 ]; 
@@ -47,13 +48,19 @@ if [ $(cat /etc/nginx/nginx.conf | grep passthrough | wc -l) -eq 1 ];
    echo "NGINX Config already has passthrough config added"; 
  else 
   echo "Adding passthrought config to nginx config file ";
+  echo  ""
   echo "include /etc/nginx/passthrough.conf;" >> /etc/nginx/nginx.conf
 fi
 
 
+echo "NGINX config file now looks like this"
+
 bat /etc/nginx/nginx.conf || cat /etc/nginx/nginx.conf
 
 #nginx -t
+
+echo "Testing NGINX Config"
+echo ""
 
 if (nginx -t) ;
   then
@@ -63,10 +70,13 @@ if (nginx -t) ;
     exit 1;
 fi
 
-
-
+echo "Starting NGINX Service"
+echo ""
 
 systemctl start nginx
+
+echo "Checking NGINX Service status"
+echo ""
 
 if (systemctl status nginx) ;
   then
