@@ -82,6 +82,7 @@ JOIN_COMMAND=$(kubeadm token create --print-join-command --certificate-key "$CER
 #
 
 echo "JOIN COMMAND is [$JOIN_COMMAND]"
+echo $$JOIN_COMMAND > join.text
 echo "Running joining command from remote machine"
 #ssh node01 "$JOIN_COMMAND"
 
